@@ -1,12 +1,71 @@
-import { useState } from "react";
+import { DragEvent, HtmlHTMLAttributes, useState } from "react";
+
+export const DATA = [
+  {
+    id: 1,
+    title: "Brainstorming",
+  },
+  {
+    id: 2,
+    title: "Planning",
+  },
+  // {
+  //   id: 3,
+  //   title: "Design",
+  // },
+  // {
+  //   id: 4,
+  //   title: "Development",
+  // },
+  // {
+  //   id: 5,
+  //   title: "Testing",
+  // },
+  // {
+  //   id: 6,
+  //   title: "Deployment",
+  // },
+];
 
 const Dashboard = () => {
+  const [initialData, setInitialData] = useState(DATA);
+
   const [isExpanded, setIsExpanded] = useState(false);
 
+  const [isHovering, setIsHovering] = useState(false);
+
+  const [zoneElements, setZoneElements] = useState<
+    { id: number; title: string }[]
+  >([]);
+
+  const onDragOver = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsHovering(true);
+  };
+  const onDragLeave = () => {
+    setIsHovering(false);
+  };
+
+  const onDrop = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsHovering(false);
+    const id = Number.parseInt(event.dataTransfer.getData("id"), 10);
+    const item = initialData.find((item) => item.id === id);
+
+    if (item) {
+      setZoneElements((data) => [...data, item]);
+      setInitialData(initialData.filter((item) => item.id !== id));
+    }
+  };
+
+  const onDragStart = (event: DragEvent<HTMLDivElement>, id: number) => {
+    event.dataTransfer.setData("id", id.toString());
+  };
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen dark:bg-neutral-900">
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 z-10 flex items-center px-4">
+      <nav className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-neutral-900 border-b border-gray-200 dark:border-neutral-700 z-10 flex items-center px-4">
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-2">
             <svg
@@ -15,7 +74,7 @@ const Dashboard = () => {
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="size-6"
+              className="size-6 dark:text-neutral-100"
             >
               <path
                 strokeLinecap="round"
@@ -23,17 +82,19 @@ const Dashboard = () => {
                 d="M6 13.5V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 9.75V10.5"
               />
             </svg>
-            <span className="font-semibold">Get It Done</span>
+            <span className="font-semibold text-gray-900 dark:text-neutral-100">
+              Get It Done
+            </span>
           </div>
           <div className="flex items-center gap-4">
-            <button className="p-2 hover:bg-gray-100 rounded-full">
+            <button className="p-2 hover:bg-gray-100 dark:hover:bg-neutral-700 rounded-full">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="size-6"
+                className="size-6 dark:text-neutral-100"
               >
                 <path
                   strokeLinecap="round"
@@ -42,7 +103,7 @@ const Dashboard = () => {
                 />
               </svg>
             </button>
-            <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
+            <div className="h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
           </div>
         </div>
       </nav>
@@ -51,11 +112,11 @@ const Dashboard = () => {
         <aside
           className={`fixed h-[calc(100vh-3rem)] ${
             isExpanded ? "w-60" : "w-16"
-          } transition-all duration-300 left-0 bottom-0 py-8 border-r border-gray-200`}
+          } transition-all duration-300 left-0 bottom-0 py-8 border-r border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-900`}
         >
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="absolute -right-5 top-9 bg-white p-1 rounded-full border-2 border-gray-200"
+            className="absolute -right-4 top-9 bg-white dark:bg-neutral-900 p-1 rounded-full border-2 border-gray-200 dark:border-neutral-700"
             title={isExpanded ? "close sidebar" : "open sidebar"}
           >
             <svg
@@ -64,7 +125,7 @@ const Dashboard = () => {
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className={`w-4 h-4 transition-transform ${
+              className={`w-4 h-4 transition-transform dark:text-neutral-100  ${
                 isExpanded ? "" : "rotate-180"
               }`}
             >
@@ -78,7 +139,7 @@ const Dashboard = () => {
           <nav className={`space-y-2 px-2.5`}>
             <a
               href="#"
-              className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg"
+              className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-neutral-700 rounded-lg"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -86,7 +147,7 @@ const Dashboard = () => {
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="size-6 text-gray-500 min-w-6"
+                className="size-6 text-gray-500  dark:text-neutral-100"
               >
                 <path
                   strokeLinecap="round"
@@ -95,7 +156,7 @@ const Dashboard = () => {
                 />
               </svg>
               <p
-                className={`font-medium text-gray-500 whitespace-nowrap ${
+                className={`font-medium text-gray-500 whitespace-nowrap dark:text-neutral-100 ${
                   !isExpanded && "hidden"
                 }`}
               >
@@ -104,7 +165,7 @@ const Dashboard = () => {
             </a>
             <a
               href="#"
-              className="flex items-center  gap-2 p-2 hover:bg-gray-100 rounded-lg"
+              className="flex items-center  gap-2 p-2 hover:bg-gray-100 rounded-lg dark:hover:bg-neutral-700"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -112,7 +173,7 @@ const Dashboard = () => {
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="size-6 text-gray-500"
+                className="size-6 text-gray-500 dark:text-neutral-100"
               >
                 <path
                   strokeLinecap="round"
@@ -121,7 +182,7 @@ const Dashboard = () => {
                 />
               </svg>
               <p
-                className={`font-medium text-gray-500 whitespace-nowrap ${
+                className={`font-medium text-gray-500 dark:text-neutral-100 whitespace-nowrap ${
                   !isExpanded && "hidden"
                 }`}
               >
@@ -130,7 +191,7 @@ const Dashboard = () => {
             </a>
             <a
               href="#"
-              className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg"
+              className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg dark:hover:bg-neutral-700"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -138,7 +199,7 @@ const Dashboard = () => {
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="size-6"
+                className="size-6 dark:text-neutral-100"
               >
                 <path
                   strokeLinecap="round"
@@ -148,7 +209,7 @@ const Dashboard = () => {
               </svg>
 
               <p
-                className={`font-medium text-gray-500 whitespace-nowrap ${
+                className={`font-medium text-gray-500 dark:text-neutral-100 whitespace-nowrap ${
                   !isExpanded && "hidden"
                 }`}
               >
@@ -157,7 +218,7 @@ const Dashboard = () => {
             </a>
             <a
               href="#"
-              className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg"
+              className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg dark:hover:bg-neutral-700"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -165,7 +226,7 @@ const Dashboard = () => {
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="size-6"
+                className="size-6 dark:text-neutral-100"
               >
                 <path
                   strokeLinecap="round"
@@ -175,7 +236,7 @@ const Dashboard = () => {
               </svg>
 
               <p
-                className={`font-medium text-gray-500 whitespace-nowrap ${
+                className={`font-medium text-gray-500 dark:text-neutral-100 whitespace-nowrap ${
                   !isExpanded && "hidden"
                 }`}
               >
@@ -184,7 +245,7 @@ const Dashboard = () => {
             </a>
             <a
               href="#"
-              className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg"
+              className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg dark:hover:bg-neutral-700"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -192,7 +253,7 @@ const Dashboard = () => {
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="size-6"
+                className="size-6 dark:text-neutral-100"
               >
                 <path
                   strokeLinecap="round"
@@ -206,7 +267,7 @@ const Dashboard = () => {
                 />
               </svg>
               <p
-                className={`font-medium text-gray-500 whitespace-nowrap ${
+                className={`font-medium text-gray-500 dark:text-neutral-100 whitespace-nowrap ${
                   !isExpanded && "hidden"
                 }`}
               >
@@ -217,30 +278,29 @@ const Dashboard = () => {
         </aside>
 
         {/* Existing section with adjusted padding */}
-        <section className={`flex-1 ${isExpanded ? "ml-72" : "ml-28"} mt-8`}>
-          <h1 className="font-bold text-3xl">Project Name</h1>
+        <section className={`flex-1 ${isExpanded ? "ml-72" : "ml-24"} mt-8`}>
+          <h1 className="font-bold text-3xl dark:text-white">Project Name</h1>
 
-          {/* task columns */}
-          <div className="mt-8 flex gap-5 h-[calc(100vh-11rem)] overflow-y-auto scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300">
-            <div className="bg-gray-100 rounded-lg min-w-[355px] h-fit">
-              {/* header */}
-              <div className="sticky top-0 z-10 left-0 right-0 pt-5 px-5 bg-gray-100">
+          <div className="mt-8 flex gap-5 h-[calc(100vh-11rem)] overflow-y-auto scrollbar-thin scrollbar-track-gray-100 dark:scrollbar-track-gray-800 scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600">
+            {/* Columns */}
+            <div className="bg-gray-100 relative z-20 dark:bg-neutral-800/90  min-w-[355px] h-fit">
+              <div className="sticky top-0 z-10 left-0 right-0 pt-5 px-5  bg-gray-100  dark:bg-neutral-800/90">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-x-2">
-                    <div className="size-2 rounded-full bg-indigo-600" />
-                    <p className="font-medium">To Do</p>
-                    <div className="size-5 bg-gray-300 flex justify-center rounded-full items-center text-xs ml-1">
+                    <div className="size-2 rounded-full bg-indigo-600 dark:bg-indigo-500" />
+                    <p className="font-medium dark:text-neutral-100">To Do</p>
+                    <div className="size-5 bg-neutral-300 dark:bg-neutral-400 flex justify-center rounded-full items-center text-xs ml-1">
                       4
                     </div>
                   </div>
-                  <div className="bg-indigo-200/70 flex items-center justify-center rounded-md size-6">
+                  <div className="bg-indigo-200/70 dark:bg-indigo-500 flex items-center justify-center rounded-md size-6">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
                       strokeWidth={1.5}
                       stroke="currentColor"
-                      className="size-5 text-indigo-600"
+                      className="size-5 text-indigo-600 dark:text-indigo-100 "
                     >
                       <path
                         strokeLinecap="round"
@@ -250,62 +310,42 @@ const Dashboard = () => {
                     </svg>
                   </div>
                 </div>
-                <div className="w-full bg-indigo-600 h-1 mt-5 rounded-md" />
+                <div className="w-full bg-indigo-600 dark:bg-indigo-500 h-1 mt-5 rounded-md" />
               </div>
 
-              <div className="px-5 space-y-5 py-5">
-                <Card />
-                <Card />
-                <Card />
-                <Card />
-                <Card />
-                <Card />
-                <Card />
-                <Card />
+              <div className="px-5 space-y-5 py-5 ">
+                {initialData.map((item) => (
+                  <Card
+                    key={item.id}
+                    title={item.title}
+                    onDragStart={(e) => onDragStart(e, item.id)}
+                  />
+                ))}
               </div>
             </div>
 
-            <div className="bg-gray-100 rounded-lg min-w-[355px] h-fit">
-              {/* header */}
-              <div className="sticky top-0 z-10 left-0 right-0 pt-5 px-5 bg-gray-100">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-x-2">
-                    <div className="size-2 rounded-full bg-indigo-600" />
-                    <p className="font-medium">To Do</p>
-                    <div className="size-5 bg-gray-300 flex justify-center rounded-full items-center text-xs ml-1">
-                      4
-                    </div>
+            {/* drop zone */}
+            <div
+              onDrop={onDrop}
+              onDragOver={onDragOver}
+              onDragLeave={onDragLeave}
+              className={`border-2 h-72 w-full border-dashed  ${
+                isHovering && "border-red-400"
+              }`}
+            >
+              {zoneElements?.length > 0 ? (
+                zoneElements.map((item) => (
+                  <div key={item.id}>
+                    <p className="text-neutral-100 font-bold tracking-widest">
+                      {item.title}
+                    </p>
                   </div>
-                  <div className="bg-indigo-200/70 flex items-center justify-center rounded-md size-6">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="size-5 text-indigo-600"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M12 4.5v15m7.5-7.5h-15"
-                      />
-                    </svg>
-                  </div>
-                </div>
-                <div className="w-full bg-indigo-600 h-1 mt-5 rounded-md" />
-              </div>
-
-              <div className="px-5 space-y-5 py-5">
-                <Card />
-                <Card />
-                <Card />
-                <Card />
-                <Card />
-                <Card />
-                <Card />
-                <Card />
-              </div>
+                ))
+              ) : (
+                <p className=" text-neutral-100 font-bold tracking-widest p-4">
+                  Drop zone
+                </p>
+              )}
             </div>
           </div>
         </section>
@@ -314,11 +354,18 @@ const Dashboard = () => {
   );
 };
 
-const Card = () => {
+export const Card = ({
+  title,
+  ...divParams
+}: { title: string } & HtmlHTMLAttributes<HTMLDivElement>) => {
   return (
-    <div className=" bg-white shadow-xl p-5 max-w-80 rounded-lg cursor-pointer">
+    <div
+      draggable
+      className="bg-white dark:bg-neutral-900 shadow-xl p-5 max-w-80 rounded-lg cursor-pointer"
+      {...divParams}
+    >
       <div className=" flex items-center justify-between">
-        <p className=" bg-orange-200/60 text-orange-500 inline-block px-1.5 py-1 rounded-lg text-xs">
+        <p className=" bg-lime-200/60 text-lime-500 dark:bg-lime-600 dark:text-lime-100 inline-block px-1.5 py-0.5 rounded-lg text-xs">
           Low
         </p>
         <svg
@@ -327,7 +374,7 @@ const Card = () => {
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="size-6"
+          className="size-6 dark:text-neutral-100"
         >
           <path
             strokeLinecap="round"
@@ -337,8 +384,8 @@ const Card = () => {
         </svg>
       </div>
 
-      <h3 className="text-lg font-semibold mt-1">Brainstorming</h3>
-      <p className=" text-gray-400 text-xs pr-4 mt-1.5">
+      <h3 className="text-lg font-semibold mt-1 dark:text-white">{title}</h3>
+      <p className="text-neutral-400 dark:text-neutral-400 text-xs pr-4 mt-1.5">
         Brainstorming brings team members' diverse experience into play.{" "}
       </p>
 
@@ -350,7 +397,7 @@ const Card = () => {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="size-5 text-stone-500"
+            className="size-5 text-stone-500 dark:text-neutral-100"
           >
             <path
               strokeLinecap="round"
@@ -358,7 +405,9 @@ const Card = () => {
               d="M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"
             />
           </svg>
-          <p className=" text-xs text-stone-500">12 comments</p>
+          <p className=" text-xs text-stone-500 dark:text-neutral-100">
+            12 comments
+          </p>
         </div>
         <div className="flex items-center gap-1">
           <svg
@@ -367,7 +416,7 @@ const Card = () => {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="size-5 text-stone-500"
+            className="size-5 text-stone-500 dark:text-neutral-100"
           >
             <path
               strokeLinecap="round"
@@ -375,7 +424,9 @@ const Card = () => {
               d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 0 0-1.883 2.542l.857 6a2.25 2.25 0 0 0 2.227 1.932H19.05a2.25 2.25 0 0 0 2.227-1.932l.857-6a2.25 2.25 0 0 0-1.883-2.542m-16.5 0V6A2.25 2.25 0 0 1 6 3.75h3.879a1.5 1.5 0 0 1 1.06.44l2.122 2.12a1.5 1.5 0 0 0 1.06.44H18A2.25 2.25 0 0 1 20.25 9v.776"
             />
           </svg>
-          <p className=" text-xs text-stone-500">2 files</p>
+          <p className=" text-xs text-stone-500 dark:text-neutral-100">
+            2 files
+          </p>
         </div>
       </div>
     </div>
